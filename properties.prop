@@ -1,0 +1,6 @@
+db_host=jdbc:h2:~/test
+db_name=sa
+db_pass=sa
+
+default_host=localhost
+default_port=1339
