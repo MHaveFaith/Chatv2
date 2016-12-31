@@ -5,21 +5,27 @@ import java.util.Properties;
 import java.io.*;
 import org.mindrot.jbcrypt.BCrypt;
 
+import javax.swing.*;
+
 /**
  * Created by Keno on 12/12/2016.
  */
 
-public class DBManager {
+public class DBManager{
 
     private String db_host, db_name, db_pass;
     private Connection con;
+    private JTextArea events;
 
     /***
      * Constructor
      * This establishes a connection with the H2 Database
      */
-    public DBManager() {
+
+    public DBManager(JTextArea events) {
+        this.events = events;
         try {
+
             Class.forName("org.h2.Driver");
 
             try {
@@ -32,21 +38,21 @@ public class DBManager {
                 db_pass = prop.getProperty("db_pass"); //DB_Pass
                 con = DriverManager.getConnection(db_host, db_name, db_pass);
 
-                System.out.println("DB Booted Succesfully.");
+                events.append("\nDB Booted Successfully.");
+
 
             } catch (FileNotFoundException e) {
-                e.printStackTrace(); // FIXME: 12/12/2016
-
+                events.append("\nDB File Not found Exception.");
             } catch (SQLException se) {
                 se.printStackTrace(); // FIXME: 12/12/2016
-                System.out.println("Unable to connect to database");
+                events.append("\nUnable to Connect to Database.");
                 displaySQLErrors(se);
                 System.exit(1);
             } catch (IOException ie) {
-                ie.printStackTrace(); // FIXME: 12/12/2016
+                events.append("\nDB IO Exception Occurred");
             }
         } catch (Exception e) {
-            System.out.print("Unable to load h2 Driver");
+            events.append("\nUnable to Load Database Driver.");
             System.exit(1);
         }
     }
@@ -100,8 +106,6 @@ public class DBManager {
                 String query = "INSERT INTO Users VALUES('" + username + "','" + hashed_pw + "');";
                 ps = con.prepareStatement(query);
                 int rs = ps.executeUpdate();
-                System.out.println("Account created.");
-
                 return true;
             }
         } catch (SQLException e) {
@@ -139,11 +143,11 @@ public class DBManager {
     /**
      * Use this to save code writing, call when SQL Exception is triggered.
      */
-    private void displaySQLErrors(SQLException e) {
+    private void displaySQLErrors(SQLException e)
+    {
         System.out.println("SQLException: " + e.getMessage() + "\n");
         System.out.println("SQLState: " + e.getSQLState() + "\n");
         System.out.println("VendorError: " + e.getErrorCode() + "\n");
     }
-
 
 }

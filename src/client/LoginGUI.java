@@ -16,6 +16,7 @@ public class LoginGUI extends JFrame {
     private javax.swing.JPasswordField passwordField;
     private javax.swing.JButton registerButton;
     private javax.swing.JTextField usernameField;
+    private String username;
 
     private Client client;
     private boolean loggedIn = false;
@@ -25,6 +26,7 @@ public class LoginGUI extends JFrame {
         this.clientGUI = (ClientGUI) parent;
         this.client = client;
         initComponents();
+        username = usernameField.getText();
     }
 
     /**
@@ -35,6 +37,7 @@ public class LoginGUI extends JFrame {
             return;
         }
         if (client.logintoAccount(usernameField.getText(), passwordField.getText())) {
+            this.setVisible(false);
             clientGUI.setVisible(true);
             loggedIn = true;
             clientGUI.updateChat();
@@ -141,6 +144,10 @@ public class LoginGUI extends JFrame {
         RegisterGUI registerGUIDialog = new RegisterGUI(client);
         registerGUIDialog.setLocationRelativeTo(null);
         registerGUIDialog.setVisible(true);
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     /**

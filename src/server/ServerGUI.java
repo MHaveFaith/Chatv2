@@ -6,21 +6,30 @@
  */
 package server;
 
+import javafx.concurrent.Worker;
+import sun.swing.SwingUtilities2;
+
+import javax.swing.*;
+import javax.swing.text.DefaultCaret;
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  *
  * @author Adekunle
  */
+
 public class ServerGUI extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ServerGUI
-     */
+    public Server server;
+
     public ServerGUI() {
         initComponents();
         setResizable(false);
         setTitle("Server GUI");
         events.setEditable(false);
+
         chatMessages.setEditable(false);
+        stopServer.setEnabled(false);
     }
 
     /**
@@ -40,17 +49,22 @@ public class ServerGUI extends javax.swing.JFrame {
         startServer = new javax.swing.JButton();
         stopServer = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         events.setColumns(20);
         events.setRows(5);
         jScrollPane1.setViewportView(events);
 
+        DefaultCaret caret = (DefaultCaret)events.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        DefaultCaret caret2 = (DefaultCaret)chatMessages.getCaret();
+        caret2.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
         jTabbedPane1.addTab("Server Events", jScrollPane1);
 
         chatMessages.setColumns(20);
         chatMessages.setRows(5);
-        chatMessages.setPreferredSize(new java.awt.Dimension(164, 20));
         jScrollPane2.setViewportView(chatMessages);
 
         jTabbedPane1.addTab("Chat Messages", jScrollPane2);
@@ -100,11 +114,18 @@ public class ServerGUI extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void startServerActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        startServer.setEnabled(false);
+        stopServer.setEnabled(true);
+
+        Server server = new Server(events, chatMessages);
+        server.start();
     }
 
     private void stopServerActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        new Server(events, chatMessages).stop();
+        events.append("\nConnection Closed.");
+        stopServer.setEnabled(false);
+        startServer.setEnabled(true);
     }
 
     /**

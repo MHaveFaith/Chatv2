@@ -25,5 +25,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES />
+        <JAVADOC>
+          <root url="jar://$MODULE_DIR$/foxtrot-4.0-distribution.zip!/foxtrot-4.0/apidocs" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/foxtrot-4.0-distribution.zip!/foxtrot-4.0/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

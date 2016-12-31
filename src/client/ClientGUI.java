@@ -1,5 +1,9 @@
 package client;
 
+import javax.swing.text.DefaultCaret;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 public class ClientGUI extends javax.swing.JFrame {
 
 
@@ -14,7 +18,6 @@ public class ClientGUI extends javax.swing.JFrame {
     public ClientGUI(Client client) {
         initComponents();  // Add buttons to screen etc.
         this.client = client;
-
     }
 
     /**
@@ -35,6 +38,9 @@ public class ClientGUI extends javax.swing.JFrame {
         userList = new javax.swing.JList<>();
         jScrollPane3 = new javax.swing.JScrollPane();
         chatBox = new javax.swing.JTextPane();
+
+        DefaultCaret caret = (DefaultCaret)chatBox.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chat Window");
@@ -57,6 +63,27 @@ public class ClientGUI extends javax.swing.JFrame {
 
         chatBox.setEditable(false);
         jScrollPane3.setViewportView(chatBox);
+
+        sendmessageTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
+                    String message = sendmessageTextField.getText();
+                    sendmessageTextField.setText("");
+                    client.sendToChatBox(message); // Send message to the server.
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -111,7 +138,7 @@ public class ClientGUI extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -148,7 +175,5 @@ public class ClientGUI extends javax.swing.JFrame {
 
             }
         });
-
-
     }
 }

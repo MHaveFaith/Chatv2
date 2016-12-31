@@ -29,7 +29,7 @@ public class Client extends  Thread {
     public void Connect() {
         try {
             // FIXME: 12/24/2016  NEEDS PROPERTIES LOGIC HERE.
-            
+
             socket = new Socket(getHost(), getPort());
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -54,7 +54,6 @@ public class Client extends  Thread {
         return DEFAULT_HOST;
     }
 
-
     private int getPort(){
         int DEFAULT_PORT = 0;
         try {
@@ -70,7 +69,9 @@ public class Client extends  Thread {
         return DEFAULT_PORT;
     }
 
-
+    public String getUsername(){
+        return username;
+    }
 
     /***
      * Attempt to logintoAccount, method is used in LoginGUI class
@@ -138,7 +139,6 @@ public class Client extends  Thread {
        sendToServer(username + ": " + message);
     }
 
-
     /***
      * Read the servers response
      */
@@ -157,8 +157,6 @@ public class Client extends  Thread {
        out.flush();
     }
 
-
-
     public void closeConnection() {
       try {
           socket.close();
@@ -168,5 +166,4 @@ public class Client extends  Thread {
           ie.printStackTrace();
       }
     }
-
 }

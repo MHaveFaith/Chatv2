@@ -22,6 +22,7 @@ public class RegisterGUI extends JFrame {
 
     public RegisterGUI(Client client) {
         this.client = client;
+
         initComponents();
     }
 
@@ -128,6 +129,7 @@ public class RegisterGUI extends JFrame {
             if (client.registerAccount(usernameField.getText(), passwordField.getText())) {
                 JOptionPane.showMessageDialog(null, "Successfully Registered \n" +
                         "Please Login", "Registered", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
                 return;
             } else {
                 JOptionPane.showMessageDialog(null, "Username Exist Already", "Unsuccessful Attempt", JOptionPane.ERROR_MESSAGE);
@@ -156,6 +158,6 @@ public class RegisterGUI extends JFrame {
     }
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
-        // TODO add your handling code here:
+
     }
 }

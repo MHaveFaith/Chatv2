@@ -2,20 +2,22 @@ package server; /**
  * Created by Keno on 11/26/2016.
  */
 
+import com.sun.xml.internal.bind.v2.model.annotation.RuntimeAnnotationReader;
+
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class Server {
+public class Server implements Runnable {
 
-    ArrayList<ServerThread> client_list = new ArrayList<ServerThread>();
+    ArrayList<ServerThread> client_list = new ArrayList<>();
     private static ServerSocket serverSocket = null;
     private static Socket clientSocket = null;
     DBManager dbManager;
-
-    public static void main(String[] args) {
-        new Server();
-    }
+    private Thread thread;
+    private JTextArea events; //Updates events area
+    private JTextArea chatMessages; //Updates chat area
 
     /***
      * Start the thread in this Constructor and pass in a Socket, a reference to this class
@@ -38,32 +40,60 @@ public class Server {
     }
 
 
+    /*
+    @JTextArea events, allows the class to be print text to the GUI class textArea
+     */
 
-    public Server() {
-        try {
-            dbManager = new DBManager();
-            serverSocket = new ServerSocket(getPort());
-            System.out.println("Waiting for connection...");
-            while (true) {
-                clientSocket = serverSocket.accept();
-                System.out.println("Connected!");
-
-                ServerThread server_thread = new ServerThread(clientSocket, this, dbManager, client_list);
-                server_thread.start(); // Starting the thread.
-            }
-
-        } catch (IOException ie) {
-            ie.printStackTrace();
-            closeConnection();
-        }
-        closeConnection();
+    public Server(JTextArea events, JTextArea chatMessages) {
+        this.events = events;
+        this.chatMessages = chatMessages;
     }
 
     public void closeConnection() {
         try {
-            clientSocket.close();
-        } catch (IOException iii) {
-            iii.printStackTrace();
+            if (clientSocket != null) clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void run() {
+        try {
+            dbManager = new DBManager(events);
+            events.append("\nServer Up.");
+            serverSocket = new ServerSocket(getPort());
+            events.append("\nListening on Port: " + getPort());
+
+            while (true) {
+                clientSocket = serverSocket.accept();
+                ServerThread server_thread = new ServerThread(clientSocket, this, dbManager, client_list, chatMessages, events);
+                server_thread.start(); // Starting the thread.
+            }
+        } catch (IOException ie) {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        closeConnection();
+    }
+
+
+
+    //Call to start class
+    public void start(){
+        thread = new Thread(this);
+        thread.start();
+    }
+
+    @SuppressWarnings("deprecation")
+    public void stop(){
+        closeConnection();
+        if (thread != null) thread.stop();
+        thread = null;
     }
 }

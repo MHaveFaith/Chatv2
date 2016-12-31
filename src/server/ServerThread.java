@@ -5,6 +5,7 @@ package server;
  * Muhammad & Keno.
  */
 
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -17,13 +18,17 @@ public class ServerThread extends Thread {
     private BufferedReader in = null;
     private String username;
     private DBManager dbManager;
+    private JTextArea chatMessages;
+    private JTextArea events;
     private ArrayList<ServerThread> client_list;
 
-    public ServerThread(Socket connectSocket, Server server, DBManager dbManager, ArrayList client_list) {
+    public ServerThread(Socket connectSocket, Server server, DBManager dbManager, ArrayList client_list, JTextArea chatMessages, JTextArea events) {
         this.connectSocket = connectSocket;
         this.server = server;
         this.dbManager = dbManager;
         this.client_list = client_list;
+        this.chatMessages = chatMessages;
+        this.events = events;
     }
 
     public String getUsername() {
@@ -84,8 +89,8 @@ public class ServerThread extends Thread {
                     privateMessage(line);
                 }
                 else {
-                    System.out.println("Chat: " + line);
-                    sendToAllClients(line); // Sends message to everyone connected.
+                    sendToAllClients(line);// Sends message to everyone connected.
+                    chatMessages.append("\n" + line); //Send message to server message box.
                 }
             }
 
@@ -98,7 +103,6 @@ public class ServerThread extends Thread {
         }
         closeConnection();
     }
-
 
     /**
      * This method sends message to every active connection
@@ -166,11 +170,11 @@ public class ServerThread extends Thread {
      * Alerts the user when someone has exited the chat room.
      * This method also removes this person from the list.
      */
-    private synchronized void exitUser() { // FIXME: 12/24/2016
+    private synchronized void exitUser() {
         String exit_message = getUsername() + " has left the chat.";
         client_list.remove(this);
         sendToAllClients(exit_message);
-        System.out.println(exit_message); // FIXME: 12/27/2016  write in server gui
+        events.append("\n" + exit_message);
         // Send list with updated userlist to all clients.
         sendUserList();
 
@@ -199,8 +203,7 @@ public class ServerThread extends Thread {
             client_list.add(this);
             sendUserList();
             sendToAllClients(username + " has connected");
-            System.out.println(username + " has connected"); // FIXME: 12/27/2016  write in server gui
-
+            events.append("\n" +username+ " has connected to chat."); //Writes this to server.
         } else {
             out.println("REJECTED:");
             out.flush();
@@ -232,14 +235,12 @@ public class ServerThread extends Thread {
         if (dbManager.registerAccount(username, password)) {
             out.println("CREATED:");
             out.flush();
-            System.out.println(username + " just registered"); // FIXME: 12/27/2016  write to server GUI
+            events.append("\n"+ username + " just registered"); // FIXME: 12/27/2016  write to server GUI
         } else {
             out.println("REJECTED:");
             out.flush();
         }
     }
-
-
 
     /*
      *  Method to close the connections once finished with them
