@@ -13,17 +13,15 @@ import javax.swing.*;
 
 public class DBManager{
 
-    private String db_host, db_name, db_pass;
     private Connection con;
-    private JTextArea events;
 
     /***
      * Constructor
      * This establishes a connection with the H2 Database
      */
 
-    public DBManager(JTextArea events) {
-        this.events = events;
+    DBManager(JTextArea events) {
+        JTextArea events1 = events;
         try {
 
             Class.forName("org.h2.Driver");
@@ -33,9 +31,9 @@ public class DBManager{
                 FileInputStream in = new FileInputStream("properties.prop");
                 prop.load(in);
 
-                db_host = prop.getProperty("db_host"); //DB_Host
-                db_name = prop.getProperty("db_name"); //DB_Name
-                db_pass = prop.getProperty("db_pass"); //DB_Pass
+                String db_host = prop.getProperty("db_host");
+                String db_name = prop.getProperty("db_name");
+                String db_pass = prop.getProperty("db_pass");
                 con = DriverManager.getConnection(db_host, db_name, db_pass);
 
                 events.append("\nDB Booted Successfully.");
@@ -64,7 +62,7 @@ public class DBManager{
      * @param password
      * @return if it matches then return true.
      */
-    public boolean authenticateLogin(String username, String password) {
+    boolean authenticateLogin(String username, String password) {
         boolean accepted = false;
         try {
             PreparedStatement ps = null;
@@ -74,11 +72,8 @@ public class DBManager{
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 String readPass = rs.getString("Password");
-                if (BCrypt.checkpw(password, readPass)) {
-                    accepted = true;
-                } else {
-                    accepted = false;
-                }
+                //Simplify versiion instead of IF.
+                accepted = BCrypt.checkpw(password, readPass);
             } else {
                 return accepted;
             }
@@ -96,13 +91,13 @@ public class DBManager{
      * @param password
      * @return true if the account was created.
      */
-    public boolean registerAccount(String username, String password) {
+    boolean registerAccount(String username, String password) {
         String hashed_pw = BCrypt.hashpw(password, BCrypt.gensalt(10));
         try {
             if (userExists(username)) {
                 return false;
             } else {
-                PreparedStatement ps = null;
+                PreparedStatement ps;
                 String query = "INSERT INTO Users VALUES('" + username + "','" + hashed_pw + "');";
                 ps = con.prepareStatement(query);
                 int rs = ps.executeUpdate();
@@ -115,13 +110,57 @@ public class DBManager{
         }
     }
 
+    /***
+     * Create the table if it doesn't exit on system.
+     */
+    private void createTable() {
+        try {
+            PreparedStatement ps;
+            String query = "CREATE TABLE IF NOT EXISTS Users"
+                    + "  (username     VARCHAR(10) PRIMARY KEY,"
+                    + "   password     VARCHAR,"
+                    + "   rank         INTEGER(2),"
+                    + "   ban          BOOLEAN,"
+                    + "   reg_date     DATE)";
+
+            ps = con.prepareStatement(query);
+            int rs = ps.executeUpdate();
+        } catch (SQLException e) {
+            displaySQLErrors(e);
+        }
+    }
+
+    /**
+     * Used for deleting a users account.
+     * @param username
+     */
+    public void deleteAccount(String username) {
+        try {
+            PreparedStatement ps;
+            String query = "DELETE FROM Users"
+                    + " WHERE username='" + username + "'";
+            ps = con.prepareStatement(query);
+            int rs = ps.executeUpdate();
+        } catch (SQLException e) {
+            displaySQLErrors(e);
+        }
+
+    }
+
+
+    // FIXME: 1/1/2017  use loop to iterate through result set, get the column names then send message back
+    public String getAccountInfo(String username) {
+        String account_info = null;
+
+        return account_info;
+    }
 
     /**
      * Simply checks if the username exists since the username is the PRIMARY KEY
      * @param username
      * @return true if it exists and false if it doesn't.
      */
-    public boolean userExists(String username) {
+    private boolean userExists(String username) {
         boolean exists = false;
         try {
             PreparedStatement ps = null;

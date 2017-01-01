@@ -22,7 +22,7 @@ public class ServerThread extends Thread {
     private JTextArea events;
     private ArrayList<ServerThread> client_list;
 
-    public ServerThread(Socket connectSocket, Server server, DBManager dbManager, ArrayList client_list, JTextArea chatMessages, JTextArea events) {
+    ServerThread(Socket connectSocket, Server server, DBManager dbManager, ArrayList client_list, JTextArea chatMessages, JTextArea events) {
         this.connectSocket = connectSocket;
         this.server = server;
         this.dbManager = dbManager;
@@ -52,7 +52,7 @@ public class ServerThread extends Thread {
             in = new BufferedReader(new InputStreamReader(connectSocket.getInputStream()));
 
             boolean accepted = false;
-            String message = null;
+            String message;
             /** The messages, LOGIN:, REGISTER:, EXIT: */
             while (!accepted) {
                 message = in.readLine();
@@ -78,7 +78,7 @@ public class ServerThread extends Thread {
                 String line = null;
                 try {
                     line = in.readLine();
-                } catch (SocketException se) {
+                } catch (SocketException ignored) {
 
                 }
                 if (line == null) {
@@ -107,12 +107,12 @@ public class ServerThread extends Thread {
     /**
      * This method sends message to every active connection
      *
-     * @param - a message which the user has sent.
+     * @param text a message which the user has sent.
      */
-    public synchronized void sendToAllClients(String text) {
+    private synchronized void sendToAllClients(String text) {
         for (int index = 0; index < server.client_list.size(); index++) {
             ServerThread sh = server.client_list.get(index);
-            sh.sendToClient(text);
+            sh.sendToClient(profCheck(text,profanityList()));
         }
     }
 
@@ -120,8 +120,8 @@ public class ServerThread extends Thread {
     /**
      * Used with sendToAllClients
      */
-    public void sendToClient(String text) {
-        out.println(text);
+    private void sendToClient(String text) {
+        out.println(profCheck(text,profanityList()));
         out.flush();
     }
 
@@ -214,8 +214,8 @@ public class ServerThread extends Thread {
 
     private synchronized void sendUserList() {
         String userList = "USERLIST:";
-        for (int i = 0; i < client_list.size(); i++) {
-            userList += ":" + client_list.get(i).getUsername();
+        for (ServerThread aClient_list : client_list) {
+            userList += ":" + aClient_list.getUsername();
         }
         sendToAllClients(userList);
     }
@@ -224,7 +224,7 @@ public class ServerThread extends Thread {
      * RegisterGUI an account.
      * This method uses the DBManager's registerAccount boolean method which
      * returns true if the account is created or false if an error occured...(i.e user already exists)
-     * @param - Message resembles REGISTER:USERNAME:PASSWORD
+     * @param message - Message resembles REGISTER:USERNAME:PASSWORD
      */
     private synchronized void registerAccount(String message) {
         boolean accepted = false;
@@ -255,6 +255,43 @@ public class ServerThread extends Thread {
         } catch (IOException ie) {
             ie.printStackTrace();
         }
+    }
+
+    /**
+     *
+     * @param input The String length
+     * @param al Array list of profanity words. Must be an Array
+     * @return input
+     */
+    private static String profCheck(String input, ArrayList<String> al) {
+
+        for (String s : al) {
+            if (input.toLowerCase().contains(s)) {
+                input = input.replaceAll(s, "****");
+            }
+        }
+        return input;
+    }
+
+    /**
+     *
+     * @return Returning array list of profanity words read fromm file
+     */
+    private static ArrayList<String> profanityList(){
+        ArrayList<String> records = new ArrayList<>();
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader("badWords.txt"));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                records.add(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return records;
     }
 }
 

@@ -8,13 +8,13 @@ import java.awt.Frame;
  * Created by Keno on 12/18/2016.
  */
 
-public class LoginGUI extends JFrame {
+class LoginGUI extends JFrame {
 
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    public javax.swing.JButton loginButton;
+    javax.swing.JButton loginButton;
     private javax.swing.JPasswordField passwordField;
-    public javax.swing.JButton registerButton;
+    javax.swing.JButton registerButton;
     private javax.swing.JTextField usernameField;
     private String username;
 
@@ -22,7 +22,7 @@ public class LoginGUI extends JFrame {
     private boolean loggedIn = false;
     private ClientGUI2 clientGUI;
 
-    public LoginGUI(Frame parent, boolean modal, Client client) {
+    LoginGUI(Frame parent, boolean modal, Client client) {
         this.clientGUI = (ClientGUI2) parent;
         this.client = client;
         initComponents();
@@ -44,7 +44,6 @@ public class LoginGUI extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Login details invalid",
                     "Wrong Credentials", JOptionPane.ERROR_MESSAGE);
-            return;
         }
     }
 
@@ -146,7 +145,7 @@ public class LoginGUI extends JFrame {
         registerGUIDialog.setVisible(true);
     }
 
-    public String getUsername(){
+    String getUsername(){
         return username;
     }
 

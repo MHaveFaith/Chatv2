@@ -12,10 +12,9 @@ import java.util.Properties;
 
 public class Client extends  Thread {
 
-    Socket socket = null;
-    BufferedReader in = null;
-    PrintWriter out = null;
-    ClientThread client_handler;
+    private Socket socket = null;
+    private BufferedReader in = null;
+    private PrintWriter out = null;
     private String username;
     private JList userList;
     private JTextPane chatBox;
@@ -39,7 +38,7 @@ public class Client extends  Thread {
                     if (socket.isConnected())break;
                 } catch (IOException e){
                     counter++;
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             } while (!(counter == 3));
     }
@@ -131,7 +130,7 @@ public class Client extends  Thread {
     /**
      * Send a message to the server...
      */
-    public void sendToServer(String message) {
+    private void sendToServer(String message) {
         out.println(message);
         out.flush();
     }
@@ -140,14 +139,14 @@ public class Client extends  Thread {
      * Method calls the sendToServer method above and sends the username along with the message.
      * @param message
      */
-    public void sendToChatBox(String message) {
+    void sendToChatBox(String message) {
        sendToServer(username + ": " + message);
     }
 
     /***
      * Read the servers response
      */
-    public String readServerResponse() {
+    String readServerResponse() {
         String line = null;
         try {
             line = in.readLine();
@@ -157,7 +156,7 @@ public class Client extends  Thread {
         return line;
     }
 
-    public void quitMessage() {
+    void quitMessage() {
        out.println("EXIT:");
        out.flush();
     }

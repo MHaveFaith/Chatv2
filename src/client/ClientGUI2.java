@@ -8,6 +8,7 @@ package client;
 import sun.awt.WindowClosingListener;
 
 import javax.swing.*;
+import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
@@ -297,12 +298,14 @@ public class ClientGUI2 extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
                 reTryConnection();
+                System.gc();
             }
         });
     }
+
 
     private static void reTryConnection(){
         Client client = new Client();
@@ -335,7 +338,12 @@ public class ClientGUI2 extends javax.swing.JFrame {
             if (userChoice == JOptionPane.YES_OPTION)
             {
                 loginGUIDialog.dispose();
-                reTryConnection();
+                System.gc();
+                try {
+                    reTryConnection();
+                }catch (Exception e){
+                }
+
             }else if (userChoice == JOptionPane.NO_OPTION){
                 System.exit(0);
             }

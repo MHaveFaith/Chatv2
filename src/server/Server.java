@@ -14,7 +14,7 @@ public class Server implements Runnable {
     ArrayList<ServerThread> client_list = new ArrayList<>();
     private static ServerSocket serverSocket = null;
     private static Socket clientSocket = null;
-    DBManager dbManager;
+    private DBManager dbManager;
     private Thread thread;
     private JTextArea events; //Updates events area
     private JTextArea chatMessages; //Updates chat area
@@ -82,16 +82,14 @@ public class Server implements Runnable {
         closeConnection();
     }
 
-
-
     //Call to start class
-    public void start(){
+    void start(){
         thread = new Thread(this);
         thread.start();
     }
 
     @SuppressWarnings("deprecation")
-    public void stop(){
+    void stop(){
         closeConnection();
         try {
             serverSocket.close();
