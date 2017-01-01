@@ -46,6 +46,7 @@ public class ClientGUI2 extends javax.swing.JFrame {
         this.client = client;
         chatBox.setEditable(false);
         chatBox.setEnabled(true);
+        sendmessageButton.setEnabled(false);
     }
 
     public void updateChat() {
@@ -316,7 +317,6 @@ public class ClientGUI2 extends javax.swing.JFrame {
         ClientGUI2 clientGUI = new ClientGUI2(client);
         clientGUI.setLocationRelativeTo(null);
         clientGUI.setResizable(false);
-
 
         // Set logintoAccount screen as the default.
         LoginGUI loginGUIDialog = new LoginGUI(clientGUI, true, client);

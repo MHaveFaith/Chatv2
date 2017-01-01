@@ -31,6 +31,7 @@ public class ClientThread extends Thread {
      * Constantly read from the server
      */
     public void run() {
+        boolean enabled = false;
         try {
             while (true) {
                 try {
@@ -42,16 +43,15 @@ public class ClientThread extends Thread {
                 String response = null;
 
                 if ((response = client.readServerResponse()) != null) {
+                    
                     if (response.startsWith("USERLIST::")) {
                         String[] usernames = response.substring(response.indexOf(':')).split(":");
                         userList.setListData(usernames);
                     }
                     else{
-
                         if (response.startsWith(client.getUsername() + " has connected")) {
                             chatBox.setText(chatBox.getText() + response + "\n");
                         }
-
                         else {
                             chatBox.setText(chatBox.getText() + response.replaceFirst(client.getUsername(), ">") + "\n");
                         }
@@ -62,35 +62,4 @@ public class ClientThread extends Thread {
             e.printStackTrace();
         }
     }
-
-    private static String profCheck(String input, ArrayList<String> al) {
-
-        for (String s : al) {
-            if (input.toLowerCase().contains(s)) {
-                input = input.replaceAll(s, "****");
-            }
-        }
-        return input;
-    }
-
-    //Reads a file full of Profanity.
-    private static List<String> profanityList(){
-        List<String> records = new ArrayList<String>();
-        try
-        {
-            BufferedReader reader = new BufferedReader(new FileReader("badWords.txt"));
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                records.add(line);
-            }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return records;
-    }
-
 }

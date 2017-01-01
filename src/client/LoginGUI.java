@@ -33,18 +33,21 @@ class LoginGUI extends JFrame {
      * This method checks the username and password field and sends them to the server.
      */
     private void attemptLogin() {
-        if (usernameField.getText().equals("") || passwordField.getText().equals("")) {
-            return;
-        }
-        if (client.logintoAccount(usernameField.getText(), passwordField.getText())) {
-            this.setVisible(false);
-            clientGUI.setVisible(true);
-            loggedIn = true;
-            clientGUI.updateChat();
-        } else {
-            JOptionPane.showMessageDialog(this, "Login details invalid",
-                    "Wrong Credentials", JOptionPane.ERROR_MESSAGE);
-        }
+
+        new Client().start();
+            if (usernameField.getText().equals("") || passwordField.getText().equals("")) {
+                return;
+            }
+            if (client.logintoAccount(usernameField.getText(), passwordField.getText())) {
+                this.setVisible(false);
+                clientGUI.setVisible(true);
+                loggedIn = true;
+                clientGUI.updateChat();
+            } else {
+
+                JOptionPane.showMessageDialog(this, "Login details invalid",
+                        "Wrong Credentials", JOptionPane.ERROR_MESSAGE);
+            }
     }
 
     /**
@@ -138,6 +141,10 @@ class LoginGUI extends JFrame {
         attemptLogin();
     }
 
+
+    boolean userAlreadyLoggedIN(){
+        return client.readServerResponse().startsWith("ALREADYLOGGEDIN:");
+    }
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {
         RegisterGUI registerGUIDialog = new RegisterGUI(client);

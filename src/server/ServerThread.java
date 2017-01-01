@@ -195,6 +195,14 @@ public class ServerThread extends Thread {
         String username = split_message[1]; // USERNAME
         String password = split_message[2]; // PASSWORD
 
+        for(int index = 0; index < client_list.size(); index ++) {
+            if(client_list.get(index).getUsername().equals(username)) {  // If username is in this list...
+                out.println("ALREADYLOGGEDIN:");
+                out.flush();
+                return accepted;
+            }
+        }
+
         if (dbManager.authenticateLogin(username, password)) {
             setUsername(username);
             out.println("ACCEPTED:");

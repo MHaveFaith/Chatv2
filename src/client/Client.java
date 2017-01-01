@@ -135,6 +135,12 @@ public class Client extends  Thread {
         out.flush();
     }
 
+    boolean userAlreadyLoggedIN(){
+        return readServerResponse().startsWith("ALREADYLOGGEDIN:");
+    }
+
+
+
     /***
      * Method calls the sendToServer method above and sends the username along with the message.
      * @param message
