@@ -93,6 +93,11 @@ public class Server implements Runnable {
     @SuppressWarnings("deprecation")
     public void stop(){
         closeConnection();
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (thread != null) thread.stop();
         thread = null;
     }
