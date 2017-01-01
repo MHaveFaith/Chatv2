@@ -1,8 +1,12 @@
 package client;
 
+
+import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 public class ClientGUI extends javax.swing.JFrame {
 
@@ -39,7 +43,10 @@ public class ClientGUI extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         chatBox = new javax.swing.JTextPane();
 
-        DefaultCaret caret = (DefaultCaret)chatBox.getCaret();
+        sendButton.setEnabled(false);
+
+
+        DefaultCaret caret = (DefaultCaret) chatBox.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -67,15 +74,25 @@ public class ClientGUI extends javax.swing.JFrame {
         sendmessageTextField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
+                sendButton.setEnabled(true);
+                if (sendmessageTextField.getText().length() == 0) {
+                    sendButton.setEnabled(false);
+                }else if(checkChatLine(sendmessageTextField.getText())){
+                    sendButton.setEnabled(false);
+                }
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if ((e.getKeyCode() == KeyEvent.VK_ENTER)) {
-                    String message = sendmessageTextField.getText();
-                    sendmessageTextField.setText("");
-                    client.sendToChatBox(message); // Send message to the server.
+                if (sendButton.isEnabled()){
+                    if ((e.getKeyCode() == KeyEvent.VK_ENTER) && sendmessageTextField.getText().length() >= 1) {
+                        String message = sendmessageTextField.getText();
+                        sendmessageTextField.setText("");
+                        client.sendToChatBox(message);
+                        sendButton.setEnabled(false);
+                    }
+                }else{
+                    sendButton.setEnabled(false);
                 }
             }
 
@@ -118,12 +135,20 @@ public class ClientGUI extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
+    private boolean checkChatLine( String s ) {
+        return s != null && s.matches("\\s+");
+    }
+
     // Send button logic
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String message = sendmessageTextField.getText();
         sendmessageTextField.setText("");
         client.sendToChatBox(message); // Send message to the server.
-
+        if (sendmessageTextField.getText().length() == 0) {
+            sendButton.setEnabled(false);
+        }else if (sendmessageTextField.getText().length() >= 1) {
+            sendButton.setEnabled(true);
+        }
     }
 
     // Window closing
@@ -156,24 +181,45 @@ public class ClientGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Client client = new Client();
-                try {
-                    client.Connect(); // <- Start the connection.
-                } catch (Exception e) {
-                    e.printStackTrace(); // FIXME: 12/19/2016
-                }
-
-                // Boot the GUI but don't show it unless user is logged in - Logic done in 'LoginGUI' class
-                ClientGUI clientGUI = new ClientGUI(client);
-                clientGUI.setLocationRelativeTo(null);
-                clientGUI.setResizable(false);
-
-                // Set logintoAccount screen as the default.
-                LoginGUI loginGUIDialog = new LoginGUI(clientGUI, true, client);
-                loginGUIDialog.setLocationRelativeTo(null);
-                loginGUIDialog.setVisible(true);
-
+                reTryConnection();
             }
         });
+    }
+
+    private static void reTryConnection(){
+        Client client = new Client();
+
+        client.Connect();
+
+        // Boot the GUI but don't show it unless user is logged in - Logic done in 'LoginGUI' class
+        ClientGUI clientGUI = new ClientGUI(client);
+        clientGUI.setLocationRelativeTo(null);
+        clientGUI.setResizable(false);
+
+        // Set logintoAccount screen as the default.
+        LoginGUI loginGUIDialog = new LoginGUI(clientGUI, true, client);
+        loginGUIDialog.setLocationRelativeTo(null);
+        loginGUIDialog.setVisible(true);
+
+        if (client.getConnectionCount() == 3) {
+            loginGUIDialog.loginButton.setEnabled(false);
+            loginGUIDialog.registerButton.setEnabled(false);
+
+            int userChoice = JOptionPane.showOptionDialog(null,
+                    "Retry Connection to Server?",
+                    "Retry?",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, null, null);
+
+            // interpret the user's choice
+            if (userChoice == JOptionPane.YES_OPTION)
+            {
+                loginGUIDialog.dispose();
+                reTryConnection();
+            }else if (userChoice == JOptionPane.NO_OPTION){
+                System.exit(0);
+            }
+        }
     }
 }

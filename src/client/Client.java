@@ -19,24 +19,29 @@ public class Client extends  Thread {
     private String username;
     private JList userList;
     private JTextPane chatBox;
+    private int counter = 0;
 
     /**
      * Constructor which tries to initate the connection
      * to the server.
      */
 
+    int getConnectionCount(){
+        return counter;
+    }
 
-    public void Connect() {
-        try {
-            // FIXME: 12/24/2016  NEEDS PROPERTIES LOGIC HERE.
-
-            socket = new Socket(getHost(), getPort());
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
-
-        } catch (IOException ie) {
-            ie.printStackTrace();
-        }
+    void Connect() {
+        do {
+                try {
+                    socket = new Socket(getHost(), getPort());
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    out = new PrintWriter(socket.getOutputStream(), true);
+                    if (socket.isConnected())break;
+                } catch (IOException e){
+                    counter++;
+                    e.printStackTrace();
+                }
+            } while (!(counter == 3));
     }
 
     private String getHost(){
@@ -69,7 +74,7 @@ public class Client extends  Thread {
         return DEFAULT_PORT;
     }
 
-    public String getUsername(){
+    String getUsername(){
         return username;
     }
 
@@ -80,7 +85,7 @@ public class Client extends  Thread {
      * @param password
      * @return true if logged in was successful.
      */
-    public boolean logintoAccount(String username, String password) {
+    boolean logintoAccount(String username, String password) {
         boolean login_attempt = false;
         out.println("LOGIN:" + username + ":" + password);
         out.flush();
@@ -106,7 +111,7 @@ public class Client extends  Thread {
      * @param password
      * @return return true if the account was made
      */
-    public boolean registerAccount(String username, String password) {
+    boolean registerAccount(String username, String password) {
         boolean was_created = false;
         out.println("REGISTER:" + username + ":" + password);
         out.flush();

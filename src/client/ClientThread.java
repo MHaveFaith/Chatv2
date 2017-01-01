@@ -31,7 +31,6 @@ public class ClientThread extends Thread {
      */
     public void run() {
         try {
-
             while (true) {
                 try {
                     Thread.sleep(1);
@@ -44,10 +43,12 @@ public class ClientThread extends Thread {
                     if (response.startsWith("USERLIST::")) {
                         String[] usernames = response.substring(response.indexOf(':')).split(":");
                         userList.setListData(usernames);
-                    } else {
+                    }
+                    else {
                         if (response.startsWith(client.getUsername() + " has connected")) {
                             chatBox.setText(chatBox.getText() + response + "\n");
-                        } else {
+                        }
+                        else {
                             chatBox.setText(chatBox.getText() + response.replaceFirst(client.getUsername(), ">ME") + "\n");
                         }
                     }

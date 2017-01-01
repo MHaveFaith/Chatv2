@@ -12,9 +12,9 @@ public class LoginGUI extends JFrame {
 
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JButton loginButton;
+    public javax.swing.JButton loginButton;
     private javax.swing.JPasswordField passwordField;
-    private javax.swing.JButton registerButton;
+    public javax.swing.JButton registerButton;
     private javax.swing.JTextField usernameField;
     private String username;
 
