@@ -1,6 +1,1 @@
-Start Server:
-java -jar Server.jar
-
-
-Start Client:
-java -jar Client.jar
+Client GUI Improvements on 01/01/2017
