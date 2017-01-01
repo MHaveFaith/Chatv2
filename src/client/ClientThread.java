@@ -30,6 +30,7 @@ public class ClientThread extends Thread {
      * Constantly read from the server
      */
     public void run() {
+        chatBox.setEnabled(true);
         try {
             while (true) {
                 try {

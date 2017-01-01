@@ -20,10 +20,10 @@ public class LoginGUI extends JFrame {
 
     private Client client;
     private boolean loggedIn = false;
-    private ClientGUI clientGUI;
+    private ClientGUI2 clientGUI;
 
     public LoginGUI(Frame parent, boolean modal, Client client) {
-        this.clientGUI = (ClientGUI) parent;
+        this.clientGUI = (ClientGUI2) parent;
         this.client = client;
         initComponents();
         username = usernameField.getText();
