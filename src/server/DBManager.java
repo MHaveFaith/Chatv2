@@ -22,11 +22,9 @@ public class DBManager{
 
     DBManager(JTextArea events) {
         JTextArea events1 = events;
-        try {
-
-            Class.forName("org.h2.Driver");
-
             try {
+                Class.forName("org.h2.Driver");
+
                 Properties prop = new Properties();
                 FileInputStream in = new FileInputStream("properties.prop");
                 prop.load(in);
@@ -37,22 +35,19 @@ public class DBManager{
                 con = DriverManager.getConnection(db_host, db_name, db_pass);
 
                 events.append("\nDB Booted Successfully.");
-
+                createTable(); // Create the table if it's not already on the system.
 
             } catch (FileNotFoundException e) {
-                events.append("\nDB File Not found Exception.");
+                events.append("\nUnable to load configuration file.");
             } catch (SQLException se) {
-                se.printStackTrace(); // FIXME: 12/12/2016
-                events.append("\nUnable to Connect to Database.");
-                displaySQLErrors(se);
-                System.exit(1);
+                events.append("\nError connecting to your database.");
+                // FIXME: 1/2/2017  TURN THE START BUTTON TO DISABLED
+                //displaySQLErrors(se);
             } catch (IOException ie) {
-                events.append("\nDB IO Exception Occurred");
+                events.append("\nError reading configuration file");
+            } catch (ClassNotFoundException ce) {
+                events.append("Unable to Load Database Driver.");
             }
-        } catch (Exception e) {
-            events.append("\nUnable to Load Database Driver.");
-            System.exit(1);
-        }
     }
 
 
@@ -72,13 +67,15 @@ public class DBManager{
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 String readPass = rs.getString("Password");
-                //Simplify versiion instead of IF.
+
+                //Simplify version instead of IF.
                 accepted = BCrypt.checkpw(password, readPass);
             } else {
                 return accepted;
             }
         } catch (SQLException e) {
             displaySQLErrors(e);
+            accepted = false;
         }
         return accepted;
     }
@@ -92,13 +89,15 @@ public class DBManager{
      * @return true if the account was created.
      */
     boolean registerAccount(String username, String password) {
+
         String hashed_pw = BCrypt.hashpw(password, BCrypt.gensalt(10));
         try {
             if (userExists(username)) {
                 return false;
             } else {
                 PreparedStatement ps;
-                String query = "INSERT INTO Users VALUES('" + username + "','" + hashed_pw + "');";
+                String query = "INSERT INTO Users (username, password, rank, ban, reg_date) " +
+                        "VALUES('" + username + "','" + hashed_pw + "',1, FALSE, NOW());";
                 ps = con.prepareStatement(query);
                 int rs = ps.executeUpdate();
                 return true;
@@ -118,15 +117,18 @@ public class DBManager{
             PreparedStatement ps;
             String query = "CREATE TABLE IF NOT EXISTS Users"
                     + "  (username     VARCHAR(10) PRIMARY KEY,"
-                    + "   password     VARCHAR,"
+                    + "   password     VARCHAR(60),"
                     + "   rank         INTEGER(2),"
                     + "   ban          BOOLEAN,"
                     + "   reg_date     DATE)";
 
             ps = con.prepareStatement(query);
             int rs = ps.executeUpdate();
+
+            // FIXME: 1/2/2017  Message user if table HAD to be created.
         } catch (SQLException e) {
-            displaySQLErrors(e);
+            //events.append("\nError creating the database table."); fixme
+            e.printStackTrace();
         }
     }
 
@@ -138,7 +140,7 @@ public class DBManager{
         try {
             PreparedStatement ps;
             String query = "DELETE FROM Users"
-                    + " WHERE username='" + username + "'";
+                        + " WHERE username='" + username + "'";
             ps = con.prepareStatement(query);
             int rs = ps.executeUpdate();
         } catch (SQLException e) {
@@ -149,10 +151,13 @@ public class DBManager{
 
 
     // FIXME: 1/1/2017  use loop to iterate through result set, get the column names then send message back
-    public String getAccountInfo(String username) {
-        String account_info = null;
+    public String accountInfo(String username ) throws SQLException {
+        String info = null;
+//        String query = ("SELECT  * FROM Users WHERE Username='" + username + "';");
+//        ResultSet resultSet;
+//        Statement st;
 
-        return account_info;
+        return info;
     }
 
     /**

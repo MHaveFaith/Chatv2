@@ -26,27 +26,27 @@ public class ClientThread extends Thread {
                     ee.printStackTrace();
                 }
 
-                String response;
+                String response = null;
 
                 if ((response = client.readServerResponse()) != null) {
 
-                    if (response.startsWith("USERLIST::")) {
+                    if (response.startsWith("USERLIST:")) {
                         String[] usernames = response.substring(response.indexOf(':')).split(":");
                         userList.setListData(usernames);
+                    } else {
+                        chatBox.setText(chatBox.getText() + response + "\n");
                     }
-                    else{
-                        if (response.startsWith(client.getUsername() + " has connected")) {
-                            chatBox.setText(chatBox.getText() + response + "\n");
-                        }
-                        else {
-                            chatBox.setText(chatBox.getText() + response.replaceFirst(client.getUsername(), ">") + "\n");
-                        }
-                    }
+                } else {
+                    client.closeConnection();
+                    JOptionPane.showMessageDialog(null, "Server disconnected...closing the program",
+                            "Connection Error!", JOptionPane.ERROR_MESSAGE);
+                    System.exit(1);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 }
