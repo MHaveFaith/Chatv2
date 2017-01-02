@@ -10,8 +10,6 @@ import java.awt.Frame;
 
 class LoginGUI extends JFrame {
 
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     javax.swing.JButton loginButton;
     private javax.swing.JPasswordField passwordField;
     javax.swing.JButton registerButton;
@@ -19,7 +17,6 @@ class LoginGUI extends JFrame {
     private String username;
 
     private Client client;
-    private boolean loggedIn = false;
     private ClientGUI2 clientGUI;
 
     LoginGUI(Frame parent, boolean modal, Client client) {
@@ -33,21 +30,21 @@ class LoginGUI extends JFrame {
      * This method checks the username and password field and sends them to the server.
      */
     private void attemptLogin() {
-
         new Client().start();
             if (usernameField.getText().equals("") || passwordField.getText().equals("")) {
                 return;
             }
-            if (client.logintoAccount(usernameField.getText(), passwordField.getText())) {
+            if(client.logintoAccount(usernameField.getText(), passwordField.getText())) {
                 this.setVisible(false);
-                clientGUI.setVisible(true);
-                loggedIn = true;
+                clientGUI.setVisible(true);;
                 clientGUI.updateChat();
-            } else {
-
-                JOptionPane.showMessageDialog(this, "Login details invalid",
-                        "Wrong Credentials", JOptionPane.ERROR_MESSAGE);
-            }
+            }else if(client.alreadyLogged){
+                JOptionPane.showMessageDialog(null, "User already logged in. \nMake sure you're logged out of other device first.",
+                        "User already Online", JOptionPane.ERROR_MESSAGE);
+            }else{
+            JOptionPane.showMessageDialog(this, "Login details invalid",
+                    "Wrong Credentials", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -55,8 +52,8 @@ class LoginGUI extends JFrame {
      */
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        JLabel jLabel1 = new JLabel();
+        JLabel jLabel2 = new JLabel();
         usernameField = new javax.swing.JTextField();
         passwordField = new javax.swing.JPasswordField();
         loginButton = new javax.swing.JButton();
@@ -139,11 +136,6 @@ class LoginGUI extends JFrame {
     // LoginGUI Button
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {
         attemptLogin();
-    }
-
-
-    boolean userAlreadyLoggedIN(){
-        return client.readServerResponse().startsWith("ALREADYLOGGEDIN:");
     }
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {

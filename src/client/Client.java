@@ -16,9 +16,8 @@ public class Client extends  Thread {
     private BufferedReader in = null;
     private PrintWriter out = null;
     private String username;
-    private JList userList;
-    private JTextPane chatBox;
     private int counter = 0;
+    boolean alreadyLogged; //<<= Use to check if User already logged in.
 
     /**
      * Constructor which tries to initate the connection
@@ -89,14 +88,17 @@ public class Client extends  Thread {
         out.println("LOGIN:" + username + ":" + password);
         out.flush();
         String response;
-
         try {
             response = in.readLine();
             if (response.equals("ACCEPTED:")) {
                 login_attempt = true;
                 this.username = username;
+            }else if(response.equals("ALREADYLOGGEDIN:")){
+                //Set alreadyLogged to true if user is loggedIn.
+                alreadyLogged = true;
+            }else {
+                login_attempt = false;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,11 +141,9 @@ public class Client extends  Thread {
         return readServerResponse().startsWith("ALREADYLOGGEDIN:");
     }
 
-
-
     /***
      * Method calls the sendToServer method above and sends the username along with the message.
-     * @param message
+     * @param message message to send to server.
      */
     void sendToChatBox(String message) {
        sendToServer(username + ": " + message);

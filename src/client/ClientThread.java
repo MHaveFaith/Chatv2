@@ -1,27 +1,14 @@
 package client;
 
-import server.Server;
-
 import javax.swing.*;
-import java.net.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ClientThread extends Thread {
 
-    private PrintWriter out = null;
-    private BufferedReader in = null;
     private Client client;
     private JList userList;
     private JTextPane chatBox;
-    private ClientGUI2 clientGUI;
-    private LoginGUI loginGUI = new LoginGUI(clientGUI, true, client);
 
-    public ClientThread(Client client, JList userList, JTextPane chatBox) {
+    ClientThread(Client client, JList userList, JTextPane chatBox) {
         this.client = client;
         this.userList = userList;
         this.chatBox = chatBox;
@@ -31,7 +18,6 @@ public class ClientThread extends Thread {
      * Constantly read from the server
      */
     public void run() {
-        boolean enabled = false;
         try {
             while (true) {
                 try {
@@ -40,10 +26,10 @@ public class ClientThread extends Thread {
                     ee.printStackTrace();
                 }
 
-                String response = null;
+                String response;
 
                 if ((response = client.readServerResponse()) != null) {
-                    
+
                     if (response.startsWith("USERLIST::")) {
                         String[] usernames = response.substring(response.indexOf(':')).split(":");
                         userList.setListData(usernames);
@@ -58,6 +44,7 @@ public class ClientThread extends Thread {
                     }
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

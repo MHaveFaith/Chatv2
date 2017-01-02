@@ -93,10 +93,11 @@ public class Server implements Runnable {
         closeConnection();
         try {
             serverSocket.close();
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (thread != null) thread.stop();
+        if (thread != null) thread.getThreadGroup().stop();
         thread = null;
     }
 }

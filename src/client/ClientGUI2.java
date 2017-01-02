@@ -5,8 +5,6 @@
  */
 package client;
 
-import sun.awt.WindowClosingListener;
-
 import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
@@ -41,7 +39,7 @@ public class ClientGUI2 extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
-    public ClientGUI2(Client client) {
+    private ClientGUI2(Client client) {
         initComponents();
         this.client = client;
         chatBox.setEditable(false);
@@ -49,7 +47,7 @@ public class ClientGUI2 extends javax.swing.JFrame {
         sendmessageButton.setEnabled(false);
     }
 
-    public void updateChat() {
+    void updateChat() {
         new Thread(new ClientThread(client, userList, chatBox)).start();
     }
 
@@ -215,7 +213,7 @@ public class ClientGUI2 extends javax.swing.JFrame {
     }
 
     private void helpMenuActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null,"Help Items goes here.","HELP",0,null);
     }
 
     private void sendmessageButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -287,13 +285,7 @@ public class ClientGUI2 extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(ClientGUI2.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -341,7 +333,7 @@ public class ClientGUI2 extends javax.swing.JFrame {
                 System.gc();
                 try {
                     reTryConnection();
-                }catch (Exception e){
+                }catch (Exception ignored){
                 }
 
             }else if (userChoice == JOptionPane.NO_OPTION){

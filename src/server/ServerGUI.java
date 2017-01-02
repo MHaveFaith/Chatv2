@@ -6,12 +6,8 @@
  */
 package server;
 
-import javafx.concurrent.Worker;
-import sun.swing.SwingUtilities2;
-
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  *
@@ -22,7 +18,7 @@ public class ServerGUI extends javax.swing.JFrame {
 
     public Server server;
 
-    public ServerGUI() {
+    private ServerGUI() {
         initComponents();
         setResizable(false);
         setTitle("Server GUI");
@@ -41,10 +37,10 @@ public class ServerGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        JTabbedPane jTabbedPane1 = new JTabbedPane();
+        JScrollPane jScrollPane1 = new JScrollPane();
         events = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        JScrollPane jScrollPane2 = new JScrollPane();
         chatMessages = new javax.swing.JTextArea();
         startServer = new javax.swing.JButton();
         stopServer = new javax.swing.JButton();
@@ -164,11 +160,8 @@ public class ServerGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify
-    public javax.swing.JTextArea chatMessages;
-    public javax.swing.JTextArea events;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextArea chatMessages;
+    private javax.swing.JTextArea events;
     private javax.swing.JButton startServer;
     private javax.swing.JButton stopServer;
     // End of variables declaration
