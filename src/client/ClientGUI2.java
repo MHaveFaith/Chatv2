@@ -7,6 +7,7 @@ package client;
 
 import javax.swing.*;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
@@ -18,12 +19,6 @@ public class ClientGUI2 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify
     private javax.swing.JTextPane chatBox;
-    private javax.swing.JMenuItem exitMenu;
-    private javax.swing.JMenuItem fileTransferMenu;
-    private javax.swing.JMenuItem helpMenu;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -31,6 +26,18 @@ public class ClientGUI2 extends javax.swing.JFrame {
     private javax.swing.JButton sendmessageButton;
     private javax.swing.JTextField sendmessageTextfield;
     private javax.swing.JList<String> userList;
+
+    private javax.swing.JMenuItem accManagementMenu;
+    private javax.swing.JMenuItem helpMenu;
+    private javax.swing.JOptionPane helpPane;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenuItem signOutMenu;
     // End of variables declaration
 
     //Communication Variables
@@ -67,13 +74,18 @@ public class ClientGUI2 extends javax.swing.JFrame {
         sendmessageTextfield = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         chatBox = new javax.swing.JTextPane();
+
         jMenuBar2 = new javax.swing.JMenuBar();
-        jMenu2 = new javax.swing.JMenu();
-        fileTransferMenu = new javax.swing.JMenuItem();
-        helpMenu = new javax.swing.JMenuItem();
-        logourMenu = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenu4 = new javax.swing.JMenu();
+        helpPane = new javax.swing.JOptionPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        exitMenu = new javax.swing.JMenuItem();
+        signOutMenu = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        accManagementMenu = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Client GUI");
@@ -143,18 +155,43 @@ public class ClientGUI2 extends javax.swing.JFrame {
                                 .addGap(3, 3, 3))
         );
 
-        jMenu2.setText("Menu");
+        jMenu3.setText("File");
+        jMenuBar2.add(jMenu3);
 
-        fileTransferMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        fileTransferMenu.setText("File Transfer");
-        fileTransferMenu.addActionListener(new java.awt.event.ActionListener() {
+        jMenu4.setText("Edit");
+        jMenuBar2.add(jMenu4);
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jMenu1.setText("File");
+
+        signOutMenu.setText("Sign Out");
+        signOutMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileTransferMenuActionPerformed(evt);
+                signOutMenuActionPerformed(evt);
             }
         });
+        jMenu1.add(signOutMenu);
 
-        helpMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HELP, 0));
+        jMenuBar1.add(jMenu1);
+
+        jMenu5.setText("Account");
+
+        accManagementMenu.setText("Account Management");
+        accManagementMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accManagementMenuActionPerformed(evt);
+            }
+        });
+        jMenu5.add(accManagementMenu);
+
+        jMenuBar1.add(jMenu5);
+
+        jMenu2.setText("Help");
+
+
         helpMenu.setText("Help");
+        helpMenu.setComponentPopupMenu(helpPane.getComponentPopupMenu());
         helpMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 helpMenuActionPerformed(evt);
@@ -162,30 +199,9 @@ public class ClientGUI2 extends javax.swing.JFrame {
         });
         jMenu2.add(helpMenu);
 
-        logourMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        logourMenu.setText("Log Out");
-        logourMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logourMenuActionPerformed(evt);
-            }
-        });
-        jMenu2.add(logourMenu);
+        jMenuBar1.add(jMenu2);
 
-        jMenuBar2.add(jMenu2);
-
-        jMenu1.setText("Exit");
-
-        exitMenu.setText("Exit");
-        exitMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuActionPerformed(evt);
-            }
-        });
-        jMenu1.add(exitMenu);
-
-        jMenuBar2.add(jMenu1);
-
-        setJMenuBar(jMenuBar2);
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -207,13 +223,19 @@ public class ClientGUI2 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
+    private void accManagementMenuActionPerformed(ActionEvent evt) {
+    }
+
+    private void signOutMenuActionPerformed(ActionEvent evt) {
+    }
+
     private void formWindowClosed(WindowEvent evt) {
         client.quitMessage();
         client.closeConnection();
     }
 
     private void helpMenuActionPerformed(java.awt.event.ActionEvent evt) {
-        JOptionPane.showMessageDialog(null,"Help Items goes here.","HELP",0,null);
+        JOptionPane.showMessageDialog(null,"Help Items goes here.","HELP",JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void sendmessageButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -299,7 +321,6 @@ public class ClientGUI2 extends javax.swing.JFrame {
         });
     }
 
-
     private static void reTryConnection(){
         Client client = new Client();
 
@@ -341,5 +362,4 @@ public class ClientGUI2 extends javax.swing.JFrame {
             }
         }
     }
-
 }
