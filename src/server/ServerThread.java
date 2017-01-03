@@ -302,6 +302,3 @@ public class ServerThread extends Thread {
         return records;
     }
 }
-
-
-
