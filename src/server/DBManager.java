@@ -46,7 +46,7 @@ public class DBManager{
             } catch (IOException ie) {
                 events.append("\nError reading configuration file");
             } catch (ClassNotFoundException ce) {
-                events.append("Unable to Load Database Driver.");
+                events.append("\nUnable to Load Database Driver.");
             }
     }
 

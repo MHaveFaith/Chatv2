@@ -227,6 +227,17 @@ public class ClientGUI2 extends javax.swing.JFrame {
     }
 
     private void signOutMenuActionPerformed(ActionEvent evt) {
+        int userChoice = JOptionPane.showOptionDialog(null,
+                "You sure you want to Sign Out?",
+                "Sign Out?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null, null, null);
+        if (userChoice == JOptionPane.YES_OPTION)
+        {
+            client.closeConnection();
+            System.exit(0);
+        }
     }
 
     private void formWindowClosed(WindowEvent evt) {
@@ -279,14 +290,6 @@ public class ClientGUI2 extends javax.swing.JFrame {
         return s != null && s.matches("\\s+");
     }
 
-    private void logourMenuActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void fileTransferMenuActionPerformed(java.awt.event.ActionEvent evt) {
-
-    }
-
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {
         System.exit(0);
     }
@@ -316,7 +319,6 @@ public class ClientGUI2 extends javax.swing.JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 reTryConnection();
-                System.gc();
             }
         });
     }
@@ -347,7 +349,6 @@ public class ClientGUI2 extends javax.swing.JFrame {
                     JOptionPane.QUESTION_MESSAGE,
                     null, null, null);
 
-            // interpret the user's choice
             if (userChoice == JOptionPane.YES_OPTION)
             {
                 loginGUIDialog.dispose();
