@@ -5,10 +5,13 @@ package server;
  * Muhammad & Keno.
  */
 
+import com.sun.xml.internal.bind.v2.model.annotation.RuntimeAnnotationReader;
+
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ServerThread extends Thread {
 
@@ -78,13 +81,15 @@ public class ServerThread extends Thread {
 
                 }
                 if (line == null) {
-                    break; }
+                    break;
+                }
                 if (line.startsWith(username + ": :WHOSIN")) {
                     whosOnline();
                 } else if (line.startsWith(username + ": :PM")) {
                     privateMessage(line);
-                }
-                else {
+                } else if (line.startsWith(username + ": :HANGMAN")) {
+                    sendToClient("WHAT IS THISSSSSS ::"  + getHangWord());
+                } else {
                     sendToAllClients(line);// Sends message to everyone connected.
                     chatMessages.append("\n" + line); //Send message to server message box.
                 }
@@ -108,7 +113,7 @@ public class ServerThread extends Thread {
     private synchronized void sendToAllClients(String text) {
         for (int index = 0; index < server.client_list.size(); index++) {
             ServerThread sh = server.client_list.get(index);
-            sh.sendToClient(profCheck(text,profanityList()));
+            sh.sendToClient(profCheck(text, profanityList()));
         }
     }
 
@@ -117,13 +122,19 @@ public class ServerThread extends Thread {
      * Used with sendToAllClients
      */
     private void sendToClient(String text) {
-        out.println(profCheck(text,profanityList()));
+        out.println(profCheck(text, profanityList()));
+        out.flush();
+    }
+
+    private void normSendToClient(String text) {
+        out.println(text);
         out.flush();
     }
 
 
     /**
      * Command for private messaging
+     *
      * @param message looks like USERNAME: :PM USERNAME SOME_MESSAGE_TO_SEND_HERE
      */
     private synchronized void privateMessage(String message) {
@@ -132,14 +143,15 @@ public class ServerThread extends Thread {
         String username_split = split_message[2];
         String msg = split_message[3];
 
-        for(int index = 0; index < client_list.size(); index++ ) {
-            if(client_list.get(index).getUsername().equals(username_split)) {
+        for (int index = 0; index < client_list.size(); index++) {
+            if (client_list.get(index).getUsername().equals(username_split)) {
                 ServerThread sh = server.client_list.get(index);
                 sh.sendToClient("PM from: " + getUsername() + ": " + msg);
-               if(client_list.get(index).getUsername().equals(username)) {
+                if (client_list.get(index).getUsername().equals(username)) {
                     // Sad enough to msg yourself ?
-               } else {
-                sendToClient("PM to: " + username_split + " " + msg); }
+                } else {
+                    sendToClient("PM to: " + username_split + " " + msg);
+                }
             }
         }
     }
@@ -161,7 +173,6 @@ public class ServerThread extends Thread {
         out.flush();
     }
 
-
     /***
      * Alerts the user when someone has exited the chat room.
      * This method also removes this person from the list.
@@ -177,13 +188,13 @@ public class ServerThread extends Thread {
         closeConnection();
     }
 
-
     /***
      * Method is for checking is an account can be registered or not.
      * @param message - takes a message which resembles - LOGIN:USERNAME:PASSWORD then it's split.
      * @return returns true if the account was made or false if it wasn't.
      *         If the account was added then it gets added to an ArrayList for later.
      */
+
     private synchronized boolean authenticateUser(String message) {
         boolean accepted = false;
         // LOGIN:USERNAME:PASSWORD
@@ -207,7 +218,7 @@ public class ServerThread extends Thread {
             client_list.add(this);
             sendUserList();
             sendToAllClients(username + " has connected");
-            events.append("\n" +username+ " has connected to chat."); //Writes this to server.
+            events.append("\n" + username + " has connected to chat."); //Writes this to server.
         } else {
             out.println("REJECTED:");
             out.flush();
@@ -222,6 +233,34 @@ public class ServerThread extends Thread {
         }
         sendToAllClients(userList);
     }
+
+    private String getHangWord() {
+        String word = null;
+        try {
+            String[] splitWord;
+            ArrayList<String> wordAdded = new ArrayList<String>();
+            BufferedReader hangText = new BufferedReader(new FileReader("HangWord.txt"));
+            while ((word = hangText.readLine()) != null) {
+                splitWord = word.split(" ");
+                for (int i = 0; i < splitWord.length; i++) {
+                    wordAdded.add(splitWord[i].toLowerCase());
+                }
+            }
+            hangText.close();
+            Random random = new Random();
+            int index = random.nextInt(wordAdded.size());
+            word = wordAdded.get(index);
+
+            events.append("\nHnagman word is: " + word);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return word;
+    }
+
 
     /***
      * RegisterGUI an account.
@@ -241,7 +280,7 @@ public class ServerThread extends Thread {
                 if (dbManager.registerAccount(username, password)) {
                     out.println("CREATED:");
                     out.flush();
-                    events.append("\n"+ username + " just registered");
+                    events.append("\n" + username + " just registered");
                 } else {
                     out.println("REJECTED:");
                     out.flush();
@@ -267,9 +306,8 @@ public class ServerThread extends Thread {
     }
 
     /**
-     *
      * @param input The String length
-     * @param al Array list of profanity words. Must be an Array
+     * @param al    Array list of profanity words. Must be an Array
      * @return input
      */
     private static String profCheck(String input, ArrayList<String> al) {
@@ -283,20 +321,20 @@ public class ServerThread extends Thread {
     }
 
     /**
-     *
      * @return Returning array list of profanity words read fromm file
      */
-    private static ArrayList<String> profanityList(){
+    private static ArrayList<String> profanityList() {
         ArrayList<String> records = new ArrayList<>();
-        try
-        {
+
+        try {
             BufferedReader reader = new BufferedReader(new FileReader("badWords.txt"));
             String line;
-            while ((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 records.add(line);
             }
             reader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

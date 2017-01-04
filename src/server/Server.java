@@ -61,8 +61,8 @@ public class Server implements Runnable {
     public void run() {
         try {
             dbManager = new DBManager(events);
-            events.append("\nServer Up.");
             serverSocket = new ServerSocket(getPort());
+            events.append("\nServer Up.");
             events.append("\nListening on Port: " + getPort());
 
             while (true) {

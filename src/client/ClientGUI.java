@@ -6,6 +6,7 @@
 package client;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -86,6 +87,9 @@ public class ClientGUI extends javax.swing.JFrame {
         accManagementMenu = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenuItem();
+
+        DefaultCaret caret2 = (DefaultCaret)chatBox.getCaret();
+        caret2.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Client GUI");
