@@ -87,8 +87,6 @@ public class ServerThread extends Thread {
                     whosOnline();
                 } else if (line.startsWith(username + ": :PM")) {
                     privateMessage(line);
-                } else if (line.startsWith(username + ": :HANGMAN")) {
-                    sendToClient("WHAT IS THISSSSSS ::"  + getHangWord());
                 } else {
                     sendToAllClients(line);// Sends message to everyone connected.
                     chatMessages.append("\n" + line); //Send message to server message box.
@@ -213,6 +211,7 @@ public class ServerThread extends Thread {
         if (dbManager.authenticateLogin(username, password)) {
             setUsername(username);
             out.println("ACCEPTED:");
+            out.println(dbManager.accountInfo(username));
             out.flush();
             accepted = true;
             client_list.add(this);
@@ -234,33 +233,32 @@ public class ServerThread extends Thread {
         sendToAllClients(userList);
     }
 
-    private String getHangWord() {
-        String word = null;
-        try {
-            String[] splitWord;
-            ArrayList<String> wordAdded = new ArrayList<String>();
-            BufferedReader hangText = new BufferedReader(new FileReader("HangWord.txt"));
-            while ((word = hangText.readLine()) != null) {
-                splitWord = word.split(" ");
-                for (int i = 0; i < splitWord.length; i++) {
-                    wordAdded.add(splitWord[i].toLowerCase());
-                }
-            }
-            hangText.close();
-            Random random = new Random();
-            int index = random.nextInt(wordAdded.size());
-            word = wordAdded.get(index);
-
-            events.append("\nHnagman word is: " + word);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return word;
-    }
-
+//    private String getHangWord() {
+//        String word = null;
+//        try {
+//            String[] splitWord;
+//            ArrayList<String> wordAdded = new ArrayList<String>();
+//            BufferedReader hangText = new BufferedReader(new FileReader("HangWord.txt"));
+//            while ((word = hangText.readLine()) != null) {
+//                splitWord = word.split(" ");
+//                for (int i = 0; i < splitWord.length; i++) {
+//                    wordAdded.add(splitWord[i].toLowerCase());
+//                }
+//            }
+//            hangText.close();
+//            Random random = new Random();
+//            int index = random.nextInt(wordAdded.size());
+//            word = wordAdded.get(index);
+//
+//            events.append("\nHnagman word is: " + word);
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return word;
+//    }
 
     /***
      * RegisterGUI an account.

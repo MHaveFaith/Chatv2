@@ -97,7 +97,7 @@ public class DBManager{
             } else {
                 PreparedStatement ps;
                 String query = "INSERT INTO Users (username, password, rank, ban, reg_date) " +
-                        "VALUES('" + username + "','" + hashed_pw + "',1, FALSE, NOW());";
+                        "VALUES('" + username + "','" + hashed_pw + "','user', FALSE, NOW());";
                 ps = con.prepareStatement(query);
                 int rs = ps.executeUpdate();
                 return true;
@@ -116,16 +116,16 @@ public class DBManager{
         try {
             PreparedStatement ps;
             String query = "CREATE TABLE IF NOT EXISTS Users"
-                    + "  (username     VARCHAR(10) PRIMARY KEY,"
+                    + "  (username     VARCHAR_IGNORECASE(10) PRIMARY KEY,"
                     + "   password     VARCHAR(60),"
-                    + "   rank         INTEGER(2),"
+                    + "   rank         VARCHAR(10),"
                     + "   ban          BOOLEAN,"
                     + "   reg_date     DATE)";
 
             ps = con.prepareStatement(query);
             int rs = ps.executeUpdate();
             if(rs == 1){
-                events.append("\n!!! DB Table Created, Cause  \n old One Doesnt Exist !!!!");
+                events.append("\n!!! DB Table Created, Cause  \n old One Doesn't Exist !!!!");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -152,13 +152,27 @@ public class DBManager{
     }
 
 
-    // FIXME: 1/1/2017  use loop to iterate through result set, get the column names then send message back
-    public String accountInfo(String username ) throws SQLException {
+    /**
+     * This method is used for returning the user's account details...
+     * @return returns a string with the message USERNAME:RANK:REG_DATE
+     */
+    public String accountInfo(String username) {
         String info = null;
-//        String query = ("SELECT  * FROM Users WHERE Username='" + username + "';");
-//        ResultSet resultSet;
-//        Statement st;
+        try {
+            String query = ("SELECT  * FROM Users WHERE Username='" + username + "';");
+            ResultSet resultSet;
+            Statement st;
+            st = con.createStatement();
+            resultSet = st.executeQuery(query);
 
+            while (resultSet.next()) {
+                info = resultSet.getString("username") +
+                        ":" + resultSet.getString("rank") +
+                        ":" + resultSet.getString("reg_date");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return info;
     }
 

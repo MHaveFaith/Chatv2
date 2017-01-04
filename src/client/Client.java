@@ -17,6 +17,7 @@ public class Client extends  Thread {
     private PrintWriter out = null;
     private String username;
     private int counter = 0;
+    private String account_details; // <- Return account details.
     boolean alreadyLogged; //<<= Use to check if User already logged in.
 
     /**
@@ -43,6 +44,7 @@ public class Client extends  Thread {
     }
 
     private String getHost(){
+        fileExist();
         String DEFAULT_HOST = null;
         try {
             Properties prop = new Properties();
@@ -50,26 +52,61 @@ public class Client extends  Thread {
             prop.load(in);
 
             DEFAULT_HOST = prop.getProperty("default_host");
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        }catch (FileNotFoundException e){
+            JOptionPane.showMessageDialog(null,"Cannot find properties.prop file \nCreating on. You welcome");
+            fileExist();
+        }catch (IOException e) {
+            JOptionPane.showMessageDialog(null,"Opps Something went Wrong. \nI blame the Developers" );
         }
         return DEFAULT_HOST;
     }
 
+    private void fileExist() {
+        File f = new File("properties.prop");
+        if (!f.exists()) {
+            try {
+                PrintWriter pw = new PrintWriter("properties.prop", "UTF-8");
+                pw.println("db_host=jdbc:h2:~/test");
+                pw.println("db_name=sa");
+                pw.println("db_pass=sa");
+                pw.println("default_host=localhost");
+                pw.println("default_port=1339");
+                pw.flush();
+                pw.close();
+
+            } catch (FileNotFoundException ignored) {
+            } catch (UnsupportedEncodingException ignored) {
+            }
+        }
+    }
+
     private int getPort(){
+        fileExist();
         int DEFAULT_PORT = 0;
         try {
             Properties prop = new Properties();
             FileInputStream in = new FileInputStream("properties.prop");
             prop.load(in);
 
-            DEFAULT_PORT = Integer.parseInt(prop.getProperty("default_port")); //Port to Connect
+            try {
+                DEFAULT_PORT = Integer.parseInt(prop.getProperty("default_port")); //Port to Connect
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null,"Port has to be an INTEGER.");
+                fileExist();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         return DEFAULT_PORT;
+    }
+
+    public String getAccountDetails() {
+        return account_details;
+    }
+
+    String getUsername(){
+        return username;
     }
 
     /***
@@ -89,6 +126,9 @@ public class Client extends  Thread {
             if (response.equals("ACCEPTED:")) {
                 login_attempt = true;
                 this.username = username;
+
+                account_details = in.readLine();
+
             }else if(response.equals("ALREADYLOGGEDIN:")){
                 //Set alreadyLogged to true if user is loggedIn.
                 alreadyLogged = true;
@@ -133,6 +173,10 @@ public class Client extends  Thread {
         out.flush();
     }
 
+    boolean userAlreadyLoggedIN(){
+        return readServerResponse().startsWith("ALREADYLOGGEDIN:");
+    }
+
     /***
      * Method calls the sendToServer method above and sends the username along with the message.
      * @param message message to send to server.
@@ -148,8 +192,8 @@ public class Client extends  Thread {
         String line = null;
         try {
             line = in.readLine();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            closeConnection();
         }
         return line;
     }

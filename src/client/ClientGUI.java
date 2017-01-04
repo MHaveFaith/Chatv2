@@ -11,6 +11,12 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -88,8 +94,8 @@ public class ClientGUI extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenuItem();
 
-        DefaultCaret caret2 = (DefaultCaret)chatBox.getCaret();
-        caret2.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        DefaultCaret caret = (DefaultCaret)chatBox.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Client GUI");
@@ -228,6 +234,7 @@ public class ClientGUI extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void accManagementMenuActionPerformed(ActionEvent evt) {
+        new Account(client.getAccountDetails()).setVisible(true);
     }
 
     private void signOutMenuActionPerformed(ActionEvent evt) {
@@ -327,7 +334,7 @@ public class ClientGUI extends javax.swing.JFrame {
         });
     }
 
-    public static void reTryConnection(){
+    private static void reTryConnection(){
         Client client = new Client();
 
         client.Connect();
