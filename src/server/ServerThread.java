@@ -216,7 +216,6 @@ public class ServerThread extends Thread {
             out.println("REJECTED:");
             out.flush();
         }
-        // FIXME: 12/23/2016  DB CONNECTION
         return accepted;
     }
 
@@ -235,19 +234,25 @@ public class ServerThread extends Thread {
      * @param message - Message resembles REGISTER:USERNAME:PASSWORD
      */
     private synchronized void registerAccount(String message) {
-        boolean accepted = false;
-        String split_message[] = message.split(":");
-        String username = split_message[1];
-        String password = split_message[2];
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean accepted = false;
+                String split_message[] = message.split(":");
+                String username = split_message[1];
+                String password = split_message[2];
 
-        if (dbManager.registerAccount(username, password)) {
-            out.println("CREATED:");
-            out.flush();
-            events.append("\n"+ username + " just registered"); // FIXME: 12/27/2016  write to server GUI
-        } else {
-            out.println("REJECTED:");
-            out.flush();
-        }
+                if (dbManager.registerAccount(username, password)) {
+                    out.println("CREATED:");
+                    out.flush();
+                    events.append("\n"+ username + " just registered");
+                } else {
+                    out.println("REJECTED:");
+                    out.flush();
+                }
+            }
+        });
+        t.start();
     }
 
     /*

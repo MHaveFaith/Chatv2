@@ -40,7 +40,7 @@ public class ClientThread extends Thread {
                     client.closeConnection();
                     JOptionPane.showMessageDialog(null, "Server disconnected...closing the program",
                             "Connection Error!", JOptionPane.ERROR_MESSAGE);
-                    System.exit(1);
+                    System.exit(0);
                 }
             }
 

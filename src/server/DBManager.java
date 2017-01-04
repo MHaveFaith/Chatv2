@@ -12,7 +12,7 @@ import javax.swing.*;
  */
 
 public class DBManager{
-
+    private JTextArea events;
     private Connection con;
 
     /***
@@ -21,7 +21,7 @@ public class DBManager{
      */
 
     DBManager(JTextArea events) {
-        JTextArea events1 = events;
+
             try {
                 Class.forName("org.h2.Driver");
 
@@ -74,7 +74,7 @@ public class DBManager{
                 return accepted;
             }
         } catch (SQLException e) {
-            displaySQLErrors(e);
+            events.append("\n" + username + " cannot be logged into to DB");
             accepted = false;
         }
         return accepted;
@@ -104,7 +104,7 @@ public class DBManager{
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            displaySQLErrors(e);
+            events.append("\nError adding "+ username +" to DB");
             return false;
         }
     }
@@ -124,11 +124,13 @@ public class DBManager{
 
             ps = con.prepareStatement(query);
             int rs = ps.executeUpdate();
-
-            // FIXME: 1/2/2017  Message user if table HAD to be created.
+            if(rs == 1){
+                events.append("\n!!! DB Table Created, Cause  \n old One Doesnt Exist !!!!");
+            }
         } catch (SQLException e) {
-            //events.append("\nError creating the database table."); fixme
             e.printStackTrace();
+            //events.append("\nError creating the database table."); fixme
+            events.append("\nError Creating DB Table. !!!!");
         }
     }
 
@@ -144,7 +146,7 @@ public class DBManager{
             ps = con.prepareStatement(query);
             int rs = ps.executeUpdate();
         } catch (SQLException e) {
-            displaySQLErrors(e);
+            events.append("\nError deleting " + username + " from DB.");
         }
 
     }
@@ -177,21 +179,8 @@ public class DBManager{
                 exists = true;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            displaySQLErrors(e);
+           events.append("\nError Finding " + username + " in DB." );
         }
         return exists;
     }
-
-
-    /**
-     * Use this to save code writing, call when SQL Exception is triggered.
-     */
-    private void displaySQLErrors(SQLException e)
-    {
-        System.out.println("SQLException: " + e.getMessage() + "\n");
-        System.out.println("SQLState: " + e.getSQLState() + "\n");
-        System.out.println("VendorError: " + e.getErrorCode() + "\n");
-    }
-
 }

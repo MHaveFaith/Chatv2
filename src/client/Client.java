@@ -72,10 +72,6 @@ public class Client extends  Thread {
         return DEFAULT_PORT;
     }
 
-    String getUsername(){
-        return username;
-    }
-
     /***
      * Attempt to logintoAccount, method is used in LoginGUI class
      * Sends message 'LOGIN:USERNAME:PASSSWORD' to the server
@@ -135,10 +131,6 @@ public class Client extends  Thread {
     private void sendToServer(String message) {
         out.println(message);
         out.flush();
-    }
-
-    boolean userAlreadyLoggedIN(){
-        return readServerResponse().startsWith("ALREADYLOGGEDIN:");
     }
 
     /***
