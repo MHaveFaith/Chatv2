@@ -65,7 +65,7 @@ public class ServerThread extends Thread {
                 } else if (message.startsWith("REGISTER:")) {
                     registerAccount(message);
                 } else if (message.startsWith("EXIT:")) {
-                    break;
+                    break;//
                 }
             }
 
