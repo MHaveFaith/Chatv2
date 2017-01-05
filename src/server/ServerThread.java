@@ -60,12 +60,8 @@ public class ServerThread extends Thread {
                     accepted = authenticateUser(message);
                 } else if (message.startsWith("REGISTER:")) {
                     registerAccount(message);
-                } else if (message.startsWith("EXIT:")) { // FIXME: 12/27/2016 - for when login doesnt take place
-//                    System.out.println("it reaches..."); 
-//                    in.close();
-//                    out.close();
-//                    connectSocket.close();
-//                    server.closeConnection();
+                } else if (message.startsWith("EXIT:")) { 
+                    break;
                 }
             }
 
