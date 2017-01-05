@@ -10,8 +10,11 @@ import com.sun.xml.internal.bind.v2.model.annotation.RuntimeAnnotationReader;
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ServerThread extends Thread {
 
@@ -38,11 +41,9 @@ public class ServerThread extends Thread {
         return username;
     }
 
-
     private void setUsername(String username) {
         this.username = username;
     }
-
 
     /**
      * Read from the client, if the client is just logging in then it's stuck in a loop
@@ -63,7 +64,7 @@ public class ServerThread extends Thread {
                     accepted = authenticateUser(message);
                 } else if (message.startsWith("REGISTER:")) {
                     registerAccount(message);
-                } else if (message.startsWith("EXIT:")) { 
+                } else if (message.startsWith("EXIT:")) {
                     break;
                 }
             }
@@ -88,7 +89,7 @@ public class ServerThread extends Thread {
                 } else if (line.startsWith(username + ": :PM")) {
                     privateMessage(line);
                 } else {
-                    sendToAllClients(line);// Sends message to everyone connected.
+                    sendToAllClients(getTime()+" "+line);// Sends message to everyone connected.
                     chatMessages.append("\n" + line); //Send message to server message box.
                 }
             }
@@ -115,6 +116,14 @@ public class ServerThread extends Thread {
         }
     }
 
+    private synchronized String getTime(){
+        DateFormat df = new SimpleDateFormat("HH:mm");
+
+        Date todayTime = Calendar.getInstance().getTime();
+        String reportDate = "[" + df.format(todayTime) + "]";
+
+        return reportDate;
+    }
 
     /**
      * Used with sendToAllClients
@@ -123,12 +132,6 @@ public class ServerThread extends Thread {
         out.println(profCheck(text, profanityList()));
         out.flush();
     }
-
-    private void normSendToClient(String text) {
-        out.println(text);
-        out.flush();
-    }
-
 
     /**
      * Command for private messaging
@@ -144,7 +147,7 @@ public class ServerThread extends Thread {
         for (int index = 0; index < client_list.size(); index++) {
             if (client_list.get(index).getUsername().equals(username_split)) {
                 ServerThread sh = server.client_list.get(index);
-                sh.sendToClient("PM from: " + getUsername() + ": " + msg);
+                sh.sendToClient(getTime()+ " PM from: " + getUsername() + ": " + msg);
                 if (client_list.get(index).getUsername().equals(username)) {
                     // Sad enough to msg yourself ?
                 } else {
@@ -153,7 +156,6 @@ public class ServerThread extends Thread {
             }
         }
     }
-
 
     /**
      * Cheeky command for showing all that's connected.
@@ -217,7 +219,7 @@ public class ServerThread extends Thread {
             client_list.add(this);
             sendUserList();
             sendToAllClients(username + " has connected");
-            events.append("\n" + username + " has connected to chat."); //Writes this to server.
+            events.append("\n"+ getTime() + username + " has connected to chat."); //Writes this to server.
         } else {
             out.println("REJECTED:");
             out.flush();
@@ -232,33 +234,6 @@ public class ServerThread extends Thread {
         }
         sendToAllClients(userList);
     }
-
-//    private String getHangWord() {
-//        String word = null;
-//        try {
-//            String[] splitWord;
-//            ArrayList<String> wordAdded = new ArrayList<String>();
-//            BufferedReader hangText = new BufferedReader(new FileReader("HangWord.txt"));
-//            while ((word = hangText.readLine()) != null) {
-//                splitWord = word.split(" ");
-//                for (int i = 0; i < splitWord.length; i++) {
-//                    wordAdded.add(splitWord[i].toLowerCase());
-//                }
-//            }
-//            hangText.close();
-//            Random random = new Random();
-//            int index = random.nextInt(wordAdded.size());
-//            word = wordAdded.get(index);
-//
-//            events.append("\nHnagman word is: " + word);
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return word;
-//    }
 
     /***
      * RegisterGUI an account.

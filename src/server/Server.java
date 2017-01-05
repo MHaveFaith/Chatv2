@@ -65,11 +65,9 @@ public class Server implements Runnable {
         return DEFAULT_PORT;
     }
 
-
     /*
     @JTextArea events, allows the class to be print text to the GUI class textArea
      */
-
     public Server(JTextArea events, JTextArea chatMessages) {
         this.events = events;
         this.chatMessages = chatMessages;
