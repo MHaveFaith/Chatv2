@@ -4,20 +4,12 @@
  * and open the template in the editor.
  */
 package client;
-
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
-import java.awt.EventQueue;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Adekunle
@@ -26,8 +18,6 @@ public class ClientGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify
     private javax.swing.JTextPane chatBox;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JMenuItem logourMenu;
     private javax.swing.JButton sendmessageButton;
@@ -74,8 +64,8 @@ public class ClientGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        JPanel jPanel1 = new JPanel();
+        JScrollPane jScrollPane2 = new JScrollPane();
         userList = new javax.swing.JList<>();
         sendmessageButton = new javax.swing.JButton();
         sendmessageTextfield = new javax.swing.JTextField();
@@ -257,7 +247,8 @@ public class ClientGUI extends javax.swing.JFrame {
     }
 
     private void helpMenuActionPerformed(java.awt.event.ActionEvent evt) {
-        JOptionPane.showMessageDialog(null,"Help Items goes here.","HELP",JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null," \n[1]To private message another user, use \n" +
+                "':PM' followed by username and then message.", "User Commands:" ,JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void sendmessageButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -272,7 +263,6 @@ public class ClientGUI extends javax.swing.JFrame {
     }
 
     private void sendmessageTextfieldActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
     }
 
     private void sendmessageTextfieldKeyPressed(java.awt.event.KeyEvent evt) {
@@ -300,10 +290,6 @@ public class ClientGUI extends javax.swing.JFrame {
     private boolean checkChatLine( String s ) {
         return s != null && s.matches("\\s+");
     }
-
-    //    private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {
-    //        System.exit(0);
-    //    }
 
     /**
      * @param args the command line arguments

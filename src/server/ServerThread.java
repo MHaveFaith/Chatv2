@@ -88,6 +88,10 @@ public class ServerThread extends Thread {
                     whosOnline();
                 } else if (line.startsWith(username + ": :PM")) {
                     privateMessage(line);
+                }else if(line.startsWith(username +": #HELP#")){
+                    sendToClient(helpCommand());
+                }else if(line.startsWith(username + ": :DATE")){
+                    sendToClient(":DATE");
                 } else {
                     sendToAllClients(getTime()+" "+line);// Sends message to everyone connected.
                     chatMessages.append("\n" + line); //Send message to server message box.
@@ -102,6 +106,18 @@ public class ServerThread extends Thread {
             closeConnection();
         }
         closeConnection();
+    }
+
+
+    private synchronized String helpCommand(){
+        String help =
+                "\n[1] :PM [username] [message].'\n" +
+                "[2] :DATE [dd/mm/yyyy hh/mm/ss]\n" +
+                "[3] :WHOSIN [Use by Server to Update Online User List]\n" +
+                "[4] REGISTER: [Use by Server to Register User]\n" +
+                "[5] LOGIN: [Use by Server To Login User to the Chat]\n" +
+                "[6] EXIT: [Use by Server to Log User Out Upon Exit]\n";
+        return help;
     }
 
     /**

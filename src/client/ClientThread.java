@@ -1,6 +1,8 @@
 package client;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ClientThread extends Thread {
 
@@ -33,7 +35,10 @@ public class ClientThread extends Thread {
                     if (response.startsWith("USERLIST:")) {
                         String[] usernames = response.substring(response.indexOf(':')).split(":");
                         userList.setListData(usernames);
-                    } else {
+                    }else if (response.startsWith(":DATE")){
+                        chatBox.setText(chatBox.getText() + " \nCurrent Time: " + getLocalTime() + "\n");
+                    }
+                    else {
                         chatBox.setText(chatBox.getText() + response + "\n");
                     }
                 } else {
@@ -48,5 +53,15 @@ public class ClientThread extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    private String getLocalTime(){
+        String time = null;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        time = "[" + dtf.format(now) +"]";
+
+        return time;
     }
 }
